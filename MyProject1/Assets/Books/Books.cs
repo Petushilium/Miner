@@ -71,6 +71,11 @@ namespace Books
                     Debug.Log(request.downloadHandler.text);
                 }
 
+                foreach(var book in _ctx.Data.Books.BooksData) 
+                {
+                    _ctx.Data.BooksScreen.AddBook(book.MainImage, book.Title, book.Genres, book.Description);
+                }
+
                 await _loadingScreen.Hide();
             }
         }
@@ -79,8 +84,12 @@ namespace Books
         private struct Data
         {
             [SerializeField] private LoadingScreen.LoadingScreen.Data _loadingScreenData;
+            [SerializeField] private ScriptableObjects.Books _books;
+            [SerializeField] private UI.BooksScreen _booksScreen;
 
             public readonly LoadingScreen.LoadingScreen.Data LoadingScreenData => _loadingScreenData;
+            public readonly ScriptableObjects.Books Books => _books;
+            public readonly UI.BooksScreen BooksScreen => _booksScreen;
         }
 
         [SerializeField] private Data _data;
