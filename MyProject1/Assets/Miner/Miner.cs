@@ -58,11 +58,11 @@ namespace Miner
                 //    Data = _ctx.Data.CameraData,
                 //}).AddTo(this);
 
-                _ = new Deposit.Deposit.Entity(new Deposit.Deposit.Entity.Ctx
-                {
-                    OnUpdate = _ctx.OnUpdate,
-                    Data = _ctx.Data.DepositData,
-                }).AddTo(this);
+                //_ = new Deposit.Deposit.Entity(new Deposit.Deposit.Entity.Ctx
+                //{
+                //   OnUpdate = _ctx.OnUpdate,
+                //    Data = _ctx.Data.DepositData,
+                //}).AddTo(this);
 
                 AsyncInit();
             }
