@@ -59,7 +59,6 @@ namespace Books
             {
                 _loadingScreen.ShowImmediate();
 
-                /*
                 using (var request = UnityWebRequest.Get("https://misterpureshechka.github.io/MyProject1/Books/story.json")) 
                 {
                     request.SetRequestHeader("Access-Control-Allow-Credentials", "true");
@@ -71,7 +70,7 @@ namespace Books
 
                     Debug.Log(request.downloadHandler.text);
                 }
-                */
+
                 foreach(var book in _ctx.Data.Books.BooksData) 
                 {
                     _ctx.Data.BooksScreen.AddBook(book.MainImage, book.Title, book.Genres, book.Description);
