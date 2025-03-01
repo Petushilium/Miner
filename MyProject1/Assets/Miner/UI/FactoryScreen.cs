@@ -26,23 +26,6 @@ namespace Miner.UI
 
                 UpdateScreen();
             }
-
-            if (Application.isPlaying && !Input.GetMouseButton(0)) 
-            {
-                var targetPos = _verticalScrollRect.content.localPosition;
-                var nearestDistance = float.MaxValue;
-                for (var i = 0; i < _verticalScrollRect.content.transform.childCount; i++)
-                {
-                    var childTransform = _verticalScrollRect.content.transform.GetChild(i);
-                    var distance = Vector3.Distance(childTransform.position, _verticalScrollRect.viewport.transform.position);
-                    if (distance >= nearestDistance) continue;
-                    nearestDistance = distance;
-                    targetPos.y = -childTransform.localPosition.y;
-                }
-
-                _verticalScrollRect.content.localPosition = Vector3.Lerp(_verticalScrollRect.content.localPosition, targetPos, Time.deltaTime * 25f);
-            }
-            
         }
 
         private void UpdateScreen()
@@ -50,9 +33,9 @@ namespace Miner.UI
             var mainRectTransform = transform as RectTransform;
 
             var verticalGroup = GetComponentInChildren<VerticalLayoutGroup>(true);
-            verticalGroup.padding.top = Mathf.RoundToInt(mainRectTransform.rect.width);
+            verticalGroup.padding.top = _padding;
             verticalGroup.padding.right = _padding;
-            verticalGroup.padding.bottom = Mathf.RoundToInt(mainRectTransform.rect.width);
+            verticalGroup.padding.bottom = _padding;
             verticalGroup.padding.left = _padding;
             verticalGroup.spacing = _padding * 2;
 
