@@ -59,25 +59,47 @@ namespace Books
             {
                 _loadingScreen.ShowImmediate();
 
-                var url = $"{Application.streamingAssetsPath}/story.json";
-                using (var request = UnityWebRequest.Get(url)) 
-                {
-                    request.SetRequestHeader("Access-Control-Allow-Credentials", "true");
-                    request.SetRequestHeader("Access-Control-Allow-Headers", "Accept, X-Access-Token, X-Application-Name, X-Request-Sent-Time");
-                    request.SetRequestHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
-                    request.SetRequestHeader("Access-Control-Allow-Origin", "*");
-
-                    await request.SendWebRequest();
-
-                    Debug.Log(request.downloadHandler.text);
-                }
-
-                foreach(var book in _ctx.Data.Books.BooksData) 
+                foreach (var book in _ctx.Data.Books.BooksData) 
                 {
                     _ctx.Data.BooksScreen.AddBook(book.MainImage, book.Title, book.Genres, book.Description);
                 }
 
                 await _loadingScreen.Hide();
+            }
+
+            private async UniTask<string> GetText(string localPath)
+            {
+                using var request = UnityWebRequest.Get(GetPath(localPath));
+
+                SetHeaders(request);
+
+                await request.SendWebRequest();
+
+                return request.downloadHandler.text;
+            }
+
+            private async UniTask<Texture2D> GetTexture(string localPath)
+            {
+                using var request = UnityWebRequestTexture.GetTexture(GetPath(localPath));
+
+                SetHeaders(request);
+
+                await request.SendWebRequest();
+
+                return DownloadHandlerTexture.GetContent(request);
+            }
+
+            private string GetPath(string localPath)
+            {
+                return $"{Application.streamingAssetsPath}/Books/{localPath}";
+            }
+
+            private void SetHeaders(UnityWebRequest request)
+            {
+                request.SetRequestHeader("Access-Control-Allow-Credentials", "true");
+                request.SetRequestHeader("Access-Control-Allow-Headers", "Accept, X-Access-Token, X-Application-Name, X-Request-Sent-Time");
+                request.SetRequestHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
+                request.SetRequestHeader("Access-Control-Allow-Origin", "*");
             }
         }
 
