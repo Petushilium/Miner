@@ -59,7 +59,8 @@ namespace Books
             {
                 _loadingScreen.ShowImmediate();
 
-                using (var request = UnityWebRequest.Get("https://misterpureshechka.github.io/MyProject1/Books/story.json")) 
+                var url = $"{Application.streamingAssetsPath}/story.json";
+                using (var request = UnityWebRequest.Get(url)) 
                 {
                     request.SetRequestHeader("Access-Control-Allow-Credentials", "true");
                     request.SetRequestHeader("Access-Control-Allow-Headers", "Accept, X-Access-Token, X-Application-Name, X-Request-Sent-Time");
