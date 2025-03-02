@@ -1,7 +1,9 @@
 using Cysharp.Threading.Tasks;
+using Newtonsoft.Json;
 using Shared.Disposable;
 using Shared.Reactive;
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.LowLevel;
 using UnityEngine.Networking;
@@ -25,6 +27,14 @@ namespace Books
                 {
                     _ctx = ctx;
                 }
+            }
+
+            [Serializable]
+            public struct BookCard
+            {
+                public string Title;
+                public List<string> Genres;
+                public string Description;
             }
 
             public struct Ctx
@@ -59,9 +69,16 @@ namespace Books
             {
                 _loadingScreen.ShowImmediate();
 
-                foreach (var book in _ctx.Data.Books.BooksData) 
+                var rawBooks = await GetText("books.json");
+                var bookPaths = JsonConvert.DeserializeObject<List<string>>(rawBooks);
+
+                foreach (var bookPath in bookPaths) 
                 {
-                    _ctx.Data.BooksScreen.AddBook(book.MainImage, book.Title, book.Genres, book.Description);
+                    var image = await GetTexture($"{bookPath}/Image.jpg");
+                    var bookCardRaw = await GetText($"{bookPath}/Card.json");
+                    var bookCard = JsonConvert.DeserializeObject<BookCard>(bookCardRaw);
+
+                    _ctx.Data.BooksScreen.AddBook(image, bookCard.Title, bookCard.Genres, bookCard.Description);
                 }
 
                 await _loadingScreen.Hide();
@@ -107,11 +124,9 @@ namespace Books
         private struct Data
         {
             [SerializeField] private LoadingScreen.LoadingScreen.Data _loadingScreenData;
-            [SerializeField] private ScriptableObjects.Books _books;
             [SerializeField] private UI.BooksScreen _booksScreen;
 
             public readonly LoadingScreen.LoadingScreen.Data LoadingScreenData => _loadingScreenData;
-            public readonly ScriptableObjects.Books Books => _books;
             public readonly UI.BooksScreen BooksScreen => _booksScreen;
         }
 

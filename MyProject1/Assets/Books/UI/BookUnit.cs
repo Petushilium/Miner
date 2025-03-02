@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -10,7 +11,7 @@ namespace Books.UI
         [SerializeField] private AspectRatioFitter _aspectRatioFitter;
         [SerializeField] private TMP_Text _title;
 
-        public void SetData(Texture mainImage, string title, string[] genres, string description) 
+        public void SetData(Texture mainImage, string title, List<string> genres, string description) 
         {
             if (_image != null) 
             {

@@ -34,6 +34,7 @@ namespace Books.LoadingScreen
                 public void ShowImmediate()
                 {
                     _ctx.Data.CanvasGroup.alpha = 1f;
+                    _ctx.Data.CanvasGroup.gameObject.SetActive(true);
                 }
 
                 public async UniTask Show()
@@ -53,12 +54,12 @@ namespace Books.LoadingScreen
                     }
 
                     _ctx.Data.CanvasGroup.alpha = 1f;
-                    _ctx.Data.CanvasGroup.gameObject.SetActive(false);
                 }
 
                 public void HideImmediate()
                 {
                     _ctx.Data.CanvasGroup.alpha = 0f;
+                    _ctx.Data.CanvasGroup.gameObject.SetActive(false);
                 }
 
                 public async UniTask Hide()

@@ -742,7 +742,6 @@ MonoBehaviour:
       _canvasGroup: {fileID: 1465513086}
       _spinnerView: {fileID: 1662875774}
       _rotateSpeed: 15
-    _books: {fileID: 11400000, guid: 39455a177983156468e5dbc25aca4796, type: 2}
     _booksScreen: {fileID: 1761511579}
 --- !u!4 &404478306
 Transform:
@@ -885,7 +884,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
   m_AnchoredPosition: {x: 153.5, y: -223.5}
-  m_SizeDelta: {x: 307, y: 0}
+  m_SizeDelta: {x: 307, y: 41}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &768522825
 MonoBehaviour:
@@ -1057,7 +1056,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
   m_AnchoredPosition: {x: 153.5, y: -295.5}
-  m_SizeDelta: {x: 307, y: 0}
+  m_SizeDelta: {x: 307, y: 83}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &836422753
 MonoBehaviour:
@@ -1281,7 +1280,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &1300901964
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1363,7 +1362,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
   m_AnchoredPosition: {x: 153.5, y: -367.5}
-  m_SizeDelta: {x: 307, y: 0}
+  m_SizeDelta: {x: 307, y: 41}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1310613108
 MonoBehaviour:
@@ -2482,6 +2481,6 @@ SceneRoots:
   - {fileID: 195477426}
   - {fileID: 404478306}
   - {fileID: 121110205}
-  - {fileID: 1465513090}
   - {fileID: 1636364212}
   - {fileID: 1300901966}
+  - {fileID: 1465513090}

@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -65,7 +66,7 @@ namespace Books.UI
             _booksLayout.cellSize = Vector2.one * bookSize;
         }
 
-        public void AddBook(Texture mainImage, string title, string[] genres, string description) 
+        public void AddBook(Texture mainImage, string title, List<string> genres, string description) 
         {
             _bookScrollUnit.gameObject.SetActive(false);
             _bookUnit.gameObject.SetActive(false);
