@@ -46,6 +46,7 @@ namespace Books
             private readonly Ctx _ctx;
 
             private readonly LoadingScreen.LoadingScreen.Entity _loadingScreen;
+            private readonly UI.BooksScreen.Entity _booksScreen;
 
             public Entity(Ctx ctx)
             {
@@ -60,6 +61,12 @@ namespace Books
                 {
                     OnUpdate = _ctx.OnUpdate,
                     Data = _ctx.Data.LoadingScreenData,
+                }).AddTo(this);
+
+                _booksScreen = new UI.BooksScreen.Entity(new UI.BooksScreen.Entity.Ctx
+                {
+                    OnUpdate = _ctx.OnUpdate,
+                    Data = _ctx.Data.BooksScreenData,
                 }).AddTo(this);
 
                 AsyncInit();
@@ -78,7 +85,7 @@ namespace Books
                     var bookCardRaw = await GetText($"{bookPath}/Card.json");
                     var bookCard = JsonConvert.DeserializeObject<BookCard>(bookCardRaw);
 
-                    _ctx.Data.BooksScreen.AddBook(image, bookCard.Title, bookCard.Genres, bookCard.Description);
+                    _booksScreen.AddBook(image, bookCard.Title, bookCard.Genres, bookCard.Description);
                 }
 
                 await _loadingScreen.Hide();
@@ -124,10 +131,10 @@ namespace Books
         private struct Data
         {
             [SerializeField] private LoadingScreen.LoadingScreen.Data _loadingScreenData;
-            [SerializeField] private UI.BooksScreen _booksScreen;
+            [SerializeField] private UI.BooksScreen.Data _booksScreenData;
 
             public readonly LoadingScreen.LoadingScreen.Data LoadingScreenData => _loadingScreenData;
-            public readonly UI.BooksScreen BooksScreen => _booksScreen;
+            public readonly UI.BooksScreen.Data BooksScreenData => _booksScreenData;
         }
 
         [SerializeField] private Data _data;
@@ -145,11 +152,6 @@ namespace Books
                 OnUpdate = _onUpdate,
                 Data = _data,
             }).AddTo(this);
-        }
-
-        protected override void OnDisable()
-        {
-            base.OnDisable();
         }
 
         private void Update()
