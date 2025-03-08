@@ -175,10 +175,13 @@ namespace Books.UI
             private readonly Ctx _ctx;
 
             private readonly Logic _logic;
+            private UniTaskCompletionSource<int> _completeSource;
 
-            public Entity(Ctx ctx)
+            public Entity(Ctx ctx, UniTaskCompletionSource<int> completeSource)
             {
                 _ctx = ctx;
+
+                _completeSource = completeSource;
 
                 _logic = new Logic(new Logic.Ctx
                 {
@@ -190,6 +193,15 @@ namespace Books.UI
             public async UniTask AsyncInit()
             {
                 await _logic.AsyncInit();
+
+                TestWait();
+            }
+
+            private async void TestWait() 
+            {
+                await UniTask.Delay(5000);
+
+                _completeSource.TrySetResult(1);
             }
         }
 

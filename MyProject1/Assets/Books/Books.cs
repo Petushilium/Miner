@@ -33,25 +33,34 @@ namespace Books
                     OnUpdate = _ctx.OnUpdate,
                     Data = _ctx.Data.LoadingScreenData,
                 }).AddTo(this);
+
                 loadingScreen.ShowImmediate();
-
-                //TODO: gameloop here...
-
+                var bookScreenCompletionSource = new UniTaskCompletionSource<int>();
                 var booksScreen = new UI.BooksScreen.Entity(new UI.BooksScreen.Entity.Ctx
                 {
                     OnUpdate = _ctx.OnUpdate,
                     Data = _ctx.Data.BooksScreenData,
-                }).AddTo(this);
+                },
+                bookScreenCompletionSource).AddTo(this);
                 await booksScreen.AsyncInit();
+                await loadingScreen.Hide();
 
+                while (bookScreenCompletionSource.GetStatus(0) != UniTaskStatus.Succeeded)
+                    await UniTask.NextFrame();
+
+                while (bookScreenCompletionSource.GetResult(0) != 1)
+                    await UniTask.NextFrame();
+
+                await loadingScreen.Show();
+                await booksScreen.AsyncDispose();
                 var storyScreen = new Story.StoryScreen.Entity(new Story.StoryScreen.Entity.Ctx
                 {
                     OnUpdate = _ctx.OnUpdate,
                     Data = _ctx.Data.StoriesScreenData,
                 }).AddTo(this);
-                await storyScreen.AsyncInit();
-
+                await storyScreen.LoadStory();
                 await loadingScreen.Hide();
+                await storyScreen.ShowStory();
             }
         }
 

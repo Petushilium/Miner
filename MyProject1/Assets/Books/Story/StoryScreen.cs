@@ -47,6 +47,9 @@ namespace Books.Story
                     }).AddTo(this);
 
                     UpdateScreen();
+
+                    _ctx.Data.TextPrefab.gameObject.SetActive(false);
+                    _ctx.Data.ButtonPrefab.gameObject.SetActive(false);
                 }
 
                 private void UpdateScreen()
@@ -54,50 +57,60 @@ namespace Books.Story
                     
                 }
 
-                public async UniTask AsyncInit()
+                public async UniTask LoadStory()
                 {
                     _story = new Ink.Runtime.Story(_ctx.Data.TextAsset.text);
-                    RefreshView();
                 }
 
-                private async UniTask RefreshView()
+                public async UniTask ShowStory()
                 {
-                    ClearAll();
-
-                    while (_story.canContinue)
+                    var storyInProgress = true;
+                    while (storyInProgress) 
                     {
-                        var text = _story.Continue();
-                        text = text.Trim();
-                        CreateContentView(text);
-                    }
-
-                    if (_story.currentChoices.Count > 0)
-                    {
-                        for (int i = 0; i < _story.currentChoices.Count; i++)
+                        ClearAll();
+                        while (_story.canContinue)
                         {
-                            var choice = _story.currentChoices[i];
-                            var button = CreateChoiceView(choice.text.Trim());
+                            var text = _story.Continue();
+                            text = text.Trim();
+                            Debug.Log(text);
+                            CreateContentView(text);
 
-                            button.onClick.RemoveAllListeners();
-                            button.onClick.AddListener(() => 
-                            {
-                                _story.ChooseChoiceIndex(choice.index);
-                                RefreshView();
-                            });
+                            while (!Input.GetMouseButtonUp(0))
+                                await UniTask.NextFrame();
+
+                            await UniTask.Delay(100);
+
+                            ClearAll();
                         }
-                    }
-                    else
-                    {
-                        Button choice = CreateChoiceView("End of story.\nRestart?");
-                        choice.onClick.AddListener(delegate {
-                            AsyncInit();
-                        });
+
+                        if (_story.currentChoices.Count > 0)
+                        {
+                            var waitChoice = true;
+                            for (int i = 0; i < _story.currentChoices.Count; i++)
+                            {
+                                var choice = _story.currentChoices[i];
+                                var button = CreateChoiceView(choice.text.Trim());
+
+                                button.onClick.RemoveAllListeners();
+                                button.onClick.AddListener(() =>
+                                {
+                                    _story.ChooseChoiceIndex(choice.index);
+                                    waitChoice = false;
+                                });
+                            }
+                            while (waitChoice)
+                                await UniTask.NextFrame();
+                        }
+                        else
+                        {
+                            ClearAll();
+                            _story = new Ink.Runtime.Story(_ctx.Data.TextAsset.text);
+                        }
                     }
                 }
 
                 private void CreateContentView(string text)
                 {
-                    _ctx.Data.TextPrefab.gameObject.SetActive(false);
                     var storyText = UnityEngine.Object.Instantiate(_ctx.Data.TextPrefab);
                     storyText.text = text;
                     storyText.transform.SetParent(_ctx.Data.TextPrefab.transform.parent, false);
@@ -108,7 +121,6 @@ namespace Books.Story
 
                 private Button CreateChoiceView(string text)
                 {
-                    _ctx.Data.ButtonPrefab.gameObject.SetActive(false);
                     var choice = UnityEngine.Object.Instantiate(_ctx.Data.ButtonPrefab);
                     choice.transform.SetParent(_ctx.Data.ButtonPrefab.transform.parent, false);
                     choice.gameObject.SetActive(true);
@@ -158,9 +170,14 @@ namespace Books.Story
                 }).AddTo(this);
             }
 
-            public async UniTask AsyncInit()
+            public async UniTask LoadStory()
             {
-                await _logic.AsyncInit();
+                await _logic.LoadStory();
+            }
+
+            public async UniTask ShowStory() 
+            {
+                await _logic.ShowStory();
             }
         }
 

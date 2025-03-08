@@ -752,7 +752,7 @@ MonoBehaviour:
     _storyScreenData:
       _textPrefab: {fileID: 8356241247814065619}
       _buttonPrefab: {fileID: 184613981978811969}
-      _textAsset: {fileID: 4900000, guid: 6cf48bb6d89824cc69e35b43f9a1aca6, type: 3}
+      _textAsset: {fileID: 4900000, guid: a55fcafaa517b644dac3207b9c15fc7f, type: 3}
 --- !u!4 &404478306
 Transform:
   m_ObjectHideFlags: 0
@@ -2525,7 +2525,7 @@ MonoBehaviour:
   m_Spacing: 10
   m_ChildForceExpandWidth: 0
   m_ChildForceExpandHeight: 0
-  m_ChildControlWidth: 1
+  m_ChildControlWidth: 0
   m_ChildControlHeight: 0
   m_ChildScaleWidth: 0
   m_ChildScaleHeight: 0
@@ -2761,7 +2761,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 540, y: -1150.143}
+  m_AnchoredPosition: {x: 540, y: -1172.4286}
   m_SizeDelta: {x: 116.28572, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &184613981998516261
@@ -2797,7 +2797,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
   m_AnchoredPosition: {x: 540, y: -982.5715}
-  m_SizeDelta: {x: 493.7143, y: 0}
+  m_SizeDelta: {x: 772.7, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &8356241247814026283
 MonoBehaviour:
@@ -2806,7 +2806,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8356241247819543009}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 30649d3a9faa99c48a7b1166b86bf2a0, type: 3}
   m_Name: 
@@ -2858,7 +2858,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: 'fdsfasdfdasfadsfasdfdsfaff
+  m_Text: 'fdsfasdfdasfadsfasdfdsfaff dasdasdasd  fdsfdsfdsf fdsfsdfdsf
 
     fadsfdasfdf
 
@@ -2881,7 +2881,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3245ec927659c4140ac4f8d17403cc18, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_HorizontalFit: 2
+  m_HorizontalFit: 0
   m_VerticalFit: 2
 --- !u!1 &8356241247819543009
 GameObject:
