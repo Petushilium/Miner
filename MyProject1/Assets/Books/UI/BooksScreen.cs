@@ -1,8 +1,11 @@
+using Cysharp.Threading.Tasks;
+using Newtonsoft.Json;
 using Shared.Disposable;
 using Shared.Reactive;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Networking;
 using UnityEngine.UI;
 
 namespace Books.UI 
@@ -21,12 +24,16 @@ namespace Books.UI
 
                 private readonly Ctx _ctx;
 
+                private Stack<GameObject> _units;
+
                 private int _screenWidth;
                 private int _screenHeight;
 
                 public Logic(Ctx ctx)
                 {
                     _ctx = ctx;
+
+                    _units = new ();
 
                     _ctx.OnUpdate.Subscribe(deltaTime => 
                     {
@@ -42,7 +49,7 @@ namespace Books.UI
                     UpdateScreen();
                 }
 
-                public void UpdateScreen()
+                private void UpdateScreen()
                 {
                     var verticalGroup = _ctx.Data.RootTransform.GetComponentInChildren<VerticalLayoutGroup>(true);
                     verticalGroup.padding.top = _ctx.Data.ScrollPadding;
@@ -73,7 +80,57 @@ namespace Books.UI
                     _ctx.Data.BookLayout.cellSize = Vector2.one * bookSize;
                 }
 
-                public void AddBook(Texture mainImage, string title, List<string> genres, string description)
+                public async UniTask AsyncInit()
+                {
+                    var rawBooks = await GetText("books.json");
+                    var bookPaths = JsonConvert.DeserializeObject<List<string>>(rawBooks);
+
+                    foreach (var bookPath in bookPaths)
+                    {
+                        var image = await GetTexture($"{bookPath}/Image.jpg");
+                        var bookCardRaw = await GetText($"{bookPath}/Card.json");
+                        var bookCard = JsonConvert.DeserializeObject<BookCard>(bookCardRaw);
+
+                        AddBook(image, bookCard.Title, bookCard.Genres, bookCard.Description);
+                    }
+                }
+
+                private async UniTask<string> GetText(string localPath)
+                {
+                    using var request = UnityWebRequest.Get(GetPath(localPath));
+
+                    SetHeaders(request);
+
+                    await request.SendWebRequest();
+
+                    return request.downloadHandler.text;
+                }
+
+                private async UniTask<Texture2D> GetTexture(string localPath)
+                {
+                    using var request = UnityWebRequestTexture.GetTexture(GetPath(localPath));
+
+                    SetHeaders(request);
+
+                    await request.SendWebRequest();
+
+                    return DownloadHandlerTexture.GetContent(request);
+                }
+
+                private string GetPath(string localPath)
+                {
+                    return $"{Application.streamingAssetsPath}/Books/{localPath}";
+                }
+
+                private void SetHeaders(UnityWebRequest request)
+                {
+                    request.SetRequestHeader("Access-Control-Allow-Credentials", "true");
+                    request.SetRequestHeader("Access-Control-Allow-Headers", "Accept, X-Access-Token, X-Application-Name, X-Request-Sent-Time");
+                    request.SetRequestHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
+                    request.SetRequestHeader("Access-Control-Allow-Origin", "*");
+                }
+
+                private void AddBook(Texture mainImage, string title, List<string> genres, string description)
                 {
                     _ctx.Data.BookScrollUnit.gameObject.SetActive(false);
                     _ctx.Data.BookUnit.gameObject.SetActive(false);
@@ -82,12 +139,31 @@ namespace Books.UI
                     bookScrollUnit.gameObject.SetActive(true);
                     bookScrollUnit.SetData(mainImage, title, genres, description);
 
+                    _units.Push(bookScrollUnit.gameObject);
+
                     var bookUnit = UnityEngine.Object.Instantiate(_ctx.Data.BookUnit, _ctx.Data.BookUnit.transform.parent);
                     bookUnit.gameObject.SetActive(true);
                     bookUnit.SetData(mainImage, title, genres, description);
 
+                    _units.Push(bookUnit.gameObject);
+
                     UpdateScreen();
                 }
+
+                protected override UniTask OnAsyncDispose()
+                {
+                    while (_units.TryPop(out var unitGO))
+                        UnityEngine.Object.Destroy(unitGO);
+                    return base.OnAsyncDispose();
+                }
+            }
+
+            [Serializable]
+            public struct BookCard
+            {
+                public string Title;
+                public List<string> Genres;
+                public string Description;
             }
 
             public struct Ctx
@@ -98,7 +174,7 @@ namespace Books.UI
 
             private readonly Ctx _ctx;
 
-            private Logic _logic;
+            private readonly Logic _logic;
 
             public Entity(Ctx ctx)
             {
@@ -111,8 +187,10 @@ namespace Books.UI
                 }).AddTo(this);
             }
 
-            public void UpdateScreen() => _logic.UpdateScreen();
-            public void AddBook(Texture mainImage, string title, List<string> genres, string description) => _logic.AddBook(mainImage, title, genres, description);
+            public async UniTask AsyncInit()
+            {
+                await _logic.AsyncInit();
+            }
         }
 
         [Serializable]

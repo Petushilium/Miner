@@ -1,0 +1,180 @@
+using Cysharp.Threading.Tasks;
+using Shared.Disposable;
+using Shared.Reactive;
+using System;
+using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.UI;
+
+namespace Books.Story 
+{
+    public sealed class StoryScreen
+    {
+        public class Entity : BaseDisposable 
+        {
+            private class Logic : BaseDisposable
+            {
+                public struct Ctx
+                {
+                    public IReadOnlyReactiveCommand<float> OnUpdate;
+                    public Data Data;
+                }
+
+                private readonly Ctx _ctx;
+
+                private Stack<GameObject> _units;
+
+                private int _screenWidth;
+                private int _screenHeight;
+
+                private Ink.Runtime.Story _story;
+
+                public Logic(Ctx ctx)
+                {
+                    _ctx = ctx;
+
+                    _units = new();
+
+                    _ctx.OnUpdate.Subscribe(deltaTime =>
+                    {
+                        if (_screenWidth != Screen.width || _screenHeight != Screen.height)
+                        {
+                            _screenWidth = Screen.width;
+                            _screenHeight = Screen.height;
+
+                            UpdateScreen();
+                        }
+                    }).AddTo(this);
+
+                    UpdateScreen();
+                }
+
+                private void UpdateScreen()
+                {
+                    
+                }
+
+                public async UniTask AsyncInit()
+                {
+                    _story = new Ink.Runtime.Story(_ctx.Data.TextAsset.text);
+                    RefreshView();
+                }
+
+                private async UniTask RefreshView()
+                {
+                    ClearAll();
+
+                    while (_story.canContinue)
+                    {
+                        var text = _story.Continue();
+                        text = text.Trim();
+                        CreateContentView(text);
+                    }
+
+                    if (_story.currentChoices.Count > 0)
+                    {
+                        for (int i = 0; i < _story.currentChoices.Count; i++)
+                        {
+                            var choice = _story.currentChoices[i];
+                            var button = CreateChoiceView(choice.text.Trim());
+
+                            button.onClick.RemoveAllListeners();
+                            button.onClick.AddListener(() => 
+                            {
+                                _story.ChooseChoiceIndex(choice.index);
+                                RefreshView();
+                            });
+                        }
+                    }
+                    else
+                    {
+                        Button choice = CreateChoiceView("End of story.\nRestart?");
+                        choice.onClick.AddListener(delegate {
+                            AsyncInit();
+                        });
+                    }
+                }
+
+                private void CreateContentView(string text)
+                {
+                    _ctx.Data.TextPrefab.gameObject.SetActive(false);
+                    var storyText = UnityEngine.Object.Instantiate(_ctx.Data.TextPrefab);
+                    storyText.text = text;
+                    storyText.transform.SetParent(_ctx.Data.TextPrefab.transform.parent, false);
+                    storyText.gameObject.SetActive(true);
+
+                    _units.Push(storyText.gameObject);
+                }
+
+                private Button CreateChoiceView(string text)
+                {
+                    _ctx.Data.ButtonPrefab.gameObject.SetActive(false);
+                    var choice = UnityEngine.Object.Instantiate(_ctx.Data.ButtonPrefab);
+                    choice.transform.SetParent(_ctx.Data.ButtonPrefab.transform.parent, false);
+                    choice.gameObject.SetActive(true);
+
+                    Text choiceText = choice.GetComponentInChildren<Text>();
+                    choiceText.text = text;
+
+                    var layoutGroup = choice.GetComponent<HorizontalLayoutGroup>();
+                    layoutGroup.childForceExpandHeight = false;
+
+                    _units.Push(choice.gameObject);
+
+                    return choice;
+                }
+
+                protected override UniTask OnAsyncDispose()
+                {
+                    ClearAll();
+                    return base.OnAsyncDispose();
+                }
+
+                private void ClearAll() 
+                {
+                    while (_units.TryPop(out var unitGO))
+                        UnityEngine.Object.Destroy(unitGO);
+                }
+            }
+
+            public struct Ctx
+            {
+                public IReadOnlyReactiveCommand<float> OnUpdate;
+                public Data Data;
+            }
+
+            private readonly Ctx _ctx;
+
+            private readonly Logic _logic;
+
+            public Entity(Ctx ctx)
+            {
+                _ctx = ctx;
+
+                _logic = new Logic(new Logic.Ctx
+                {
+                    OnUpdate = _ctx.OnUpdate,
+                    Data = _ctx.Data,
+                }).AddTo(this);
+            }
+
+            public async UniTask AsyncInit()
+            {
+                await _logic.AsyncInit();
+            }
+        }
+
+        [Serializable]
+        public struct Data
+        {
+            [SerializeField] private UnityEngine.UI.Text _textPrefab;
+            [SerializeField] private Button _buttonPrefab;
+            [SerializeField] private TextAsset _textAsset;
+
+            public readonly UnityEngine.UI.Text TextPrefab => _textPrefab;
+            public readonly Button ButtonPrefab => _buttonPrefab;
+            public readonly TextAsset TextAsset => _textAsset;
+        }
+    }
+}
+
