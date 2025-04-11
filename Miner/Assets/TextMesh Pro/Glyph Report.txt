@@ -1,5 +1,5 @@
 Font: Firenight  Style: Regular
-Point Size: 33   Padding: 9   SP/PD Ratio: 27.3%
+Point Size: 57   Padding: 2   SP/PD Ratio: 3.5%
 
 Characters included: 158/159
 Missing characters: 1
