@@ -1,0 +1,13 @@
+Font: Firenight  Style: Regular
+Point Size: 33   Padding: 9   SP/PD Ratio: 27.3%
+
+Characters included: 158/159
+Missing characters: 1
+Excluded characters: 0
+
+Characters missing from font file:
+----------------------------------------
+ID: 9	Hex: 9	Char [	]
+
+Characters excluded from packing:
+----------------------------------------
