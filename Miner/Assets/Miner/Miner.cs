@@ -52,18 +52,6 @@ namespace Miner
                     Data = _ctx.Data.LoadingScreenData,
                 }).AddTo(this);
 
-                //_ = new Camera.Camera.Entity(new Camera.Camera.Entity.Ctx
-                //{
-                //    OnUpdate = _ctx.OnUpdate,
-                //    Data = _ctx.Data.CameraData,
-                //}).AddTo(this);
-
-                //_ = new Deposit.Deposit.Entity(new Deposit.Deposit.Entity.Ctx
-                //{
-                //   OnUpdate = _ctx.OnUpdate,
-                //    Data = _ctx.Data.DepositData,
-                //}).AddTo(this);
-
                 AsyncInit();
             }
 
@@ -81,12 +69,8 @@ namespace Miner
         private struct Data
         {
             [SerializeField] private LoadingScreen.LoadingScreen.Data _loadingScreenData;
-            [SerializeField] private Camera.Camera.Data _cameraData;
-            [SerializeField] private Deposit.Deposit.Data _depositData;
 
             public readonly LoadingScreen.LoadingScreen.Data LoadingScreenData => _loadingScreenData;
-            public readonly Camera.Camera.Data CameraData => _cameraData;
-            public readonly Deposit.Deposit.Data DepositData => _depositData;
         }
 
         [SerializeField] private Data _data;
@@ -123,21 +107,6 @@ namespace Miner
         private void Update()
         {
             _onUpdate.Execute(Time.deltaTime);
-        }
-
-        private void OnDrawGizmos()
-        {
-            DrawSphere(Color.red, _data.DepositData.StorageView.transform.position, _data.DepositData.StorageCheckRadius);
-            foreach (var depositSource in _data.DepositData.Sources) 
-            {
-                DrawSphere(Color.blue, depositSource.DepositeView.transform.position, depositSource.CheckRadius);
-            }
-
-            void DrawSphere(Color color, Vector3 center, float radius) 
-            {
-                Gizmos.color = color;
-                Gizmos.DrawWireSphere(center, radius);
-            }
         }
     }
 }
