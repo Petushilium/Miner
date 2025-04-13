@@ -1,7 +1,7 @@
 using Cysharp.Threading.Tasks;
 using Shared.Disposable;
-using Shared.Reactive;
 using System;
+using UniRx;
 using UnityEngine;
 
 namespace Miner.LoadingScreen 
@@ -14,7 +14,7 @@ namespace Miner.LoadingScreen
             {
                 public struct Ctx
                 {
-                    public IReadOnlyReactiveCommand<float> OnUpdate;
+                    public IObservable<float> OnUpdate;
 
                     public Data Data;
                 }
@@ -84,7 +84,7 @@ namespace Miner.LoadingScreen
 
             public struct Ctx
             {
-                public IReadOnlyReactiveCommand<float> OnUpdate;
+                public IObservable<float> OnUpdate;
                 public Data Data;
             }
 
