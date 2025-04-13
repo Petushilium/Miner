@@ -6,8 +6,8 @@ namespace Miner
     [Serializable]
     internal struct Data
     {
-        [SerializeField] private LoadingScreen.LoadingScreen.Data _loadingScreenData;
+        [SerializeField] private Loading.Data _loadingScreenData;
 
-        public readonly LoadingScreen.LoadingScreen.Data LoadingScreenData => _loadingScreenData;
+        public readonly Loading.Data LoadingScreenData => _loadingScreenData;
     }
 }

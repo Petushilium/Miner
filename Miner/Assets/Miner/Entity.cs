@@ -1,5 +1,5 @@
+using Cysharp.Threading.Tasks;
 using Shared.Disposable;
-using System;
 
 namespace Miner 
 {
@@ -7,21 +7,19 @@ namespace Miner
     {
         public struct Ctx
         {
-            public IObservable<float> OnUpdate;
             public Data Data;
         }
 
         private readonly Ctx _ctx;
 
-        private readonly LoadingScreen.LoadingScreen.Entity _loadingScreen;
+        private readonly Loading.Entity _loadingScreen;
 
         public Entity(Ctx ctx)
         {
             _ctx = ctx;
 
-            _loadingScreen = new LoadingScreen.LoadingScreen.Entity(new LoadingScreen.LoadingScreen.Entity.Ctx
+            _loadingScreen = new Loading.Entity(new Loading.Entity.Ctx
             {
-                OnUpdate = _ctx.OnUpdate,
                 Data = _ctx.Data.LoadingScreenData,
             }).AddTo(this);
         }
